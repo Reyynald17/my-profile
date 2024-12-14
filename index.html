@@ -1,195 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perkenalan Diri</title>
+    <title>Pilih Opsi Acak</title>
     <style>
-        @font-face {
-            font-family: 'Horizon';
-            src: url('assets/horizon.otf') format('opentype');
-        }
         body {
-            font-family: 'Horizon', sans-serif; /* Gunakan font Horizon lokal */
-            color: #fff; /* Warna teks putih */
+            font-family: 'Open Sans', sans-serif;
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Untuk menghindari scroll */
-            background: #000; /* Background fallback jika video tidak dimuat */
+            background: #000; /* Fallback color */
         }
-        .background-video {
-            position: fixed;
+
+        /* Background wrapper */
+        .background-wrapper {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Video menutupi seluruh area */
-            z-index: -2; /* Di belakang konten lainnya */
+            background: url('./background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            filter: blur(10px); /* Blur effect */
+            opacity: 0;
+            animation: fadeInBackground 2s ease-in-out forwards; /* Animation */
         }
-        .background-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Warna overlay dengan transparansi */
-            backdrop-filter: blur(10px); /* Efek blur */
-            z-index: -1; /* Di belakang konten tapi di depan video */
+
+        @keyframes fadeInBackground {
+            0% {
+                opacity: 0;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
-        .container {
-            position: relative;
+
+        /* Content container */
+        #container {
             z-index: 1;
-            text-align: center;
-        }
-        .profile {
-            background-color: rgba(255, 255, 255, 0.8); /* Latar belakang putih transparan */
+            max-width: 90%;
+            margin: auto;
             padding: 20px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border: 1px solid #ddd;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            color: #333; /* Warna teks untuk profil */
-            max-width: 400px; /* Lebar maksimum kotak profil */
-            margin: 0 auto; /* Pusatkan kotak profil */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #333;
+            position: relative;
         }
-        .profile-photo {
-            max-width: 200px; /* Ukuran maksimum foto */
-            border-radius: 50%;
-            object-fit: cover;
+
+        h2 {
+            text-align: center;
             margin-bottom: 20px;
+            color: #444;
         }
-        h1 {
-            margin: 0;
-            font-size: 2em;
-            color: #333; /* Warna teks untuk nama */
-        }
-        p {
-            color: #666; /* Warna teks untuk bio */
-        }
-        button {
-            padding: 10px 20px;
-            margin-top: 20px;
-            font-size: 1em;
-            color: #fff;
-            background-color: #0056b3; /* Warna tombol */
-            border: none;
+
+        input[type="number"], button {
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
             border-radius: 5px;
+        }
+
+        button {
+            background-color: #5c85d6;
+            color: white;
+            border: none;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #004080; /* Warna tombol saat dihover */
+            background-color: #3a5bb3;
         }
-        .animation-video {
-            position: fixed;
-            bottom: -50%; /* Mulai dari luar layar di bawah */
-            left: 50%;
-            width: 300px; /* Ukuran video animasi */
-            height: auto;
-            z-index: 0;
-            transform: translateX(-50%);
-            transition: bottom 1s, left 1s; /* Animasi perpindahan */
+
+        #opsi-container {
+            margin: 20px 0;
         }
-        .animation-video.active {
-            bottom: 50%; /* Tempatkan di posisi tengah */
-            left: 20%; /* Tempatkan di sebelah kiri tabel pengenalan diri */
+
+        #hasil {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
         }
-        .anim-photo {
-            position: fixed;
-            bottom: -50%; /* Mulai dari luar layar di bawah */
-            right: 50%;
-            width: 150px; /* Ukuran foto dengan aspek rasio 1:1 */
-            height: 150px; /* Ukuran foto dengan aspek rasio 1:1 */
-            z-index: 0;
-            border-radius: 50%;
-            transition: bottom 1s, right 1s, transform 0.8s ease; /* Animasi perpindahan dan transformasi */
-        }
-        .anim-photo.active {
-            bottom: 50%; /* Tempatkan di posisi tengah */
-            right: 20%; /* Tempatkan di sebelah kanan tabel pengenalan diri */
-            transform: rotate(360deg); /* Putar foto animasi */
+
+        @media only screen and (max-width: 600px) {
+            #container {
+                padding: 10px;
+            }
+
+            input[type="number"], button {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
         }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const audio = document.querySelector('audio');
-            const changeColorBtn = document.getElementById('changeColorBtn');
-            const animationVideo = document.getElementById('animationVideo');
-            const animPhoto = document.getElementById('animPhoto');
-            let isAudioPlaying = false;
-
-            // Fungsi untuk memulai atau menghentikan audio saat tombol ditekan
-            changeColorBtn.addEventListener('click', function() {
-                if (!isAudioPlaying) {
-                    // Memulai animasi video
-                    animationVideo.classList.add('active');
-
-                    // Memulai animasi foto
-                    animPhoto.classList.add('active');
-                    
-                    // Memulai audio
-                    setTimeout(() => {
-                        animationVideo.play(); // Mulai pemutaran video animasi
-                        audio.play();
-                        isAudioPlaying = true;
-                        changeColorBtn.textContent = 'Stop Audio :(';
-                    }, 1000); // Jeda waktu 1 detik setelah tombol ditekan
-                } else {
-                    audio.pause();
-                    audio.currentTime = 0; // Untuk memulai ulang audio dari awal
-                    isAudioPlaying = false;
-                    changeColorBtn.textContent = 'Pencet untuk Audio :D';
-
-                    // Menghentikan animasi video dan foto
-                    animationVideo.classList.remove('active');
-                    animationVideo.pause(); // Hentikan pemutaran video animasi
-                    animationVideo.currentTime = 0; // Atur ulang waktu video
-
-                    animPhoto.classList.remove('active');
-                }
-            });
-
-            // Fungsi untuk mengubah warna latar belakang profil
-            changeColorBtn.addEventListener('mouseover', function() {
-                const colors = ['#f4f4f9', '#e0f7fa', '#ffeb3b', '#ffcdd2', '#c8e6c9'];
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
-                document.querySelector('.profile').style.backgroundColor = randomColor;
-            });
-        });
-    </script>
 </head>
 <body>
-    <!-- Video Latar Belakang -->
-    <video class="background-video" autoplay muted loop>
-        <source src="assets/my-video.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <!-- Overlay dengan efek blur -->
-    <div class="background-overlay"></div>
+    <!-- Background layer -->
+    <div class="background-wrapper"></div>
 
-    <div class="container">
-        <div class="profile">
-            <img src="assets/my-photo.jpeg" alt="My Photo" class="profile-photo">
-            <h1 id="name">Farand Altaf Emian</h1>
-            <p id="bio">Halo Semua :D, Saya suka bersepeda, bernafas, dan berdebat. Tujuan hidup saya kurang lebih ialah bertahan hidup selama mungkin :3</p>
-            <button id="changeColorBtn">Pencet untuk Audio :D</button>
-        </div>
+    <!-- Main content -->
+    <div id="container">
+        <h2 id="judul">Pilih Opsi Acak</h2>
+        <input type="number" id="jumlah-opsi" placeholder="Masukkan jumlah opsi">
+        <button id="tambah-opsi">Tambah Opsi</button>
+        <div id="opsi-container"></div>
+        <button id="pilih-opsi">Pilih Opsi</button>
+        <p id="hasil"></p>
     </div>
 
-    <!-- Video Animasi -->
-    <video id="animationVideo" class="animation-video" muted>
-        <source src="assets/animation-video.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+    <script>
+        const tambahOpsiBtn = document.getElementById('tambah-opsi');
+        const pilihOpsiBtn = document.getElementById('pilih-opsi');
+        const jumlahOpsiInput = document.getElementById('jumlah-opsi');
+        const opsiContainer = document.getElementById('opsi-container');
+        const hasil = document.getElementById('hasil');
 
-    <!-- Foto Animasi -->
-    <img id="animPhoto" src="assets/anim-photo.jpeg" alt="Animasi Foto" class="anim-photo">
+        tambahOpsiBtn.addEventListener('click', () => {
+            const jumlah = parseInt(jumlahOpsiInput.value);
+            opsiContainer.innerHTML = '';
+            hasil.textContent = '';
 
-    <!-- Audio Musik -->
-    <audio id="background-audio" style="display:none;">
-        <source src="assets/audio-web.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+            if (!isNaN(jumlah) && jumlah > 0) {
+                for (let i = 0; i < jumlah; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = `Opsi ${i + 1}`;
+                    input.style.width = 'calc(100% - 20px)';
+                    input.style.margin = '5px 0';
+                    input.style.padding = '10px';
+                    input.style.fontSize = '16px';
+                    input.style.border = '1px solid #ccc';
+                    input.style.borderRadius = '5px';
+                    opsiContainer.appendChild(input);
+                }
+            } else {
+                alert('Masukkan jumlah opsi yang valid!');
+            }
+        });
+
+        pilihOpsiBtn.addEventListener('click', () => {
+            const inputs = opsiContainer.querySelectorAll('input[type="text"]');
+            const opsi = Array.from(inputs).map(input => input.value).filter(value => value.trim() !== '');
+
+            if (opsi.length > 0) {
+                const pilihan = opsi[Math.floor(Math.random() * opsi.length)];
+                hasil.textContent = `Opsi terpilih: ${pilihan}`;
+            } else {
+                hasil.textContent = 'Tidak ada opsi yang valid untuk dipilih!';
+            }
+        });
+    </script>
 </body>
 </html>
